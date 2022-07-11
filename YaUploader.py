@@ -16,12 +16,9 @@ class YaUploader:
         headers = self.get_headers()
         params = {"path": file_path, "overwrite": "true"}
         response = requests.get(upload_url, headers=headers, params=params)
-        # pprint(response.json())
         return response.json()
 
-    def upload(self, file_path, file_name ):
-        href = self._get_upload_link(file_path=file_path).get("href", "")
-        response = requests.put(href, data=open(file_name, 'rb'))
-        response.raise_for_status()
-        if response.status_code == 201:
-            print("Success")
+    def upload(self, file_path, file_name):
+        response_href = self._get_upload_link(file_path=file_path)
+        href = response_href.get('href', '')
+        res = requests.put(href, data=file_name)
