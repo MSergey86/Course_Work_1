@@ -1,3 +1,4 @@
+import os
 import requests
 
 class YaUploader:
@@ -22,3 +23,9 @@ class YaUploader:
         response_href = self._get_upload_link(file_path=file_path)
         href = response_href.get('href', '')
         res = requests.put(href, data=file_name)
+
+    def create_folder(self, path):
+        url = "https://cloud-api.yandex.net/v1/disk/resources"
+        headers = self.get_headers()
+        res = requests.put(f'{url}?path={path}', headers=headers)
+        print(f"Папка \"{path}\" на яндекс диске создана")

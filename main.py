@@ -1,31 +1,27 @@
 
 import requests
-import logging
 from pprint import pprint
 from YaUploader import YaUploader
 from VK import VK
-import pip
+import json
+
 
 def get_put_photos(dict_photos, list_photos, qty_photos):
     for item in range(qty_photos):
         URL = dict_photos[item]['sizes'][-1]['url']
 
         url = requests.get(URL)
-
         path_to_file = "Photo_vk/" + list_photos[item]['file_name']
         photo_name = url.content
-        uploader = YaUploader(token_ya)
         uploader.upload(path_to_file, photo_name)
 
         print(f"Фото {item + 1} из vk загружено на яндекс диск")
 
 
 def create_json(list_photos):
-    with open("list_json.txt", 'w', encoding="utf-8") as file:
-        for item in list_photos:
-            file.writelines(str(item))
-            file.writelines('\n')
-    print("Файл \"list_json.txt\" создан")
+    with open("list_json.json", 'w') as file:
+        json.dump(list_photos, file)
+    print("Файл \"list_json.json\" создан")
 
 
 if __name__ == '__main__':
@@ -49,5 +45,7 @@ if __name__ == '__main__':
         dict_photos = vk.users_photos()['response']['items']
         print("Информация о фотографиях получена")
         list_photos = vk.get_list_photos(dict_photos=dict_photos, qty_photos=qty_photos)
+        uploader = YaUploader(token_ya)
+        uploader.create_folder("Photo_vk")
         get_put_photos(dict_photos=dict_photos, list_photos=list_photos, qty_photos=qty_photos)
         create_json(list_photos=list_photos)
